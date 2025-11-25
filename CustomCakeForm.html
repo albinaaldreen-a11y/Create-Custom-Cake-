@@ -425,20 +425,18 @@
                     
                     <div class="form-row two-col">
                         <div class="form-group">
-                            <label>Employee Handling Order <span class="required">*</span></label>
-                            <select name="employee_id" id="employeeSelect" required>
+                            <label>Name of Employee Handling Order <span class="required">*</span></label>
+                            <select name="employee_name" id="employeeSelect" required>
                                 <option value="">Select employee...</option>
-                                <option value="1">Emily Boudreaux - Owner</option>
-                                <option value="2">James - Bakery Manager</option>
-                                <option value="3">Dan - Accountant</option>
-                                <option value="4">Sales Staff</option>
-                                <option value="5">Bakers</option>
-                                <option value="6">Decorators</option>
+                                <option value="Emily Bordeaux" data-id="642">Emily Bordeaux - Owner</option>
+                                <option value="James Wilson" data-id="679">James Wilson - Manager</option>
+                                <option value="Lea Thompson" data-id="686">Lea Thompson</option>
+                                <option value="Leonard Cooper" data-id="631">Leonard Cooper</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Employee Name</label>
-                            <input type="text" name="employee_name" id="employeeName" placeholder="Optional">
+                            <label>Employee ID</label>
+                            <input type="text" name="employee_id" id="employeeId" readonly>
                         </div>
                     </div>
                 </div>
@@ -729,26 +727,14 @@
         numLayersSelect.addEventListener('change', generateLayers);
         cakeSizeSelect.addEventListener('change', updatePricing);
 
-        // Employee name mapping
-        const employeeData = {
-            '1': 'Owner',
-            '2': 'Bakery Manager',
-            '3': 'Accountant',
-            '4': 'Sales Staff',
-            '5': 'Bakers',
-            '6': 'Decorators'
-        };
-
+        // Employee ID auto-fill
         const employeeSelect = document.getElementById('employeeSelect');
-        const employeeTitleInput = document.getElementById('employeeTitle');
+        const employeeIdInput = document.getElementById('employeeId');
 
         employeeSelect.addEventListener('change', function() {
-            const selectedEmployeeId = employeeSelect.value;
-            if (selectedEmployeeId && employeeData[selectedEmployeeId]) {
-                employeeTitleInput.value = employeeData[selectedEmployeeId];
-            } else {
-                employeeTitleInput.value = '';
-            }
+            const selectedOption = employeeSelect.options[employeeSelect.selectedIndex];
+            const employeeId = selectedOption.dataset.id || '';
+            employeeIdInput.value = employeeId;
         });
 
         form.addEventListener('submit', function(e) {
