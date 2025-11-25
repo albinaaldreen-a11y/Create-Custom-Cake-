@@ -417,6 +417,15 @@
                             <input type="time" name="pickup_time" value="10:00" required>
                         </div>
                     </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" name="preferred_customer" id="preferredCustomer" style="width: auto; margin: 0;">
+                                Preferred Customer <small style="color:#666; font-weight: normal;">(gets 10% discount)</small>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Employee Details -->
@@ -512,6 +521,10 @@
                     <div class="price-row">
                         <span>Cake Price:</span>
                         <span id="cakePrice">$0.00</span>
+                    </div>
+                    <div class="price-row" id="discountRow" style="display: none; color: #C44569;">
+                        <span>Preferred Customer Discount (10%):</span>
+                        <span id="discountAmount">-$0.00</span>
                     </div>
                     <div class="price-row total">
                         <span>Total Amount:</span>
@@ -708,15 +721,31 @@
             const selectedOption = cakeSizeSelect.options[cakeSizeSelect.selectedIndex];
             const pricePerLayer = parseFloat(selectedOption.dataset.price) || 0;
             const numLayers = parseInt(numLayersSelect.value) || 0;
-            const totalPrice = pricePerLayer * numLayers;
+            const basePrice = pricePerLayer * numLayers;
+            
+            // Check if preferred customer discount applies
+            const preferredCustomer = document.getElementById('preferredCustomer');
+            const isPreferred = preferredCustomer ? preferredCustomer.checked : false;
+            const discount = isPreferred ? basePrice * 0.10 : 0;
+            const totalPrice = basePrice - discount;
             
             const cakePriceEl = document.getElementById('cakePrice');
+            const discountRowEl = document.getElementById('discountRow');
+            const discountAmountEl = document.getElementById('discountAmount');
             const totalAmountEl = document.getElementById('totalAmount');
             const depositAmountEl = document.getElementById('depositAmount');
             
             const deposit = totalPrice * 0.5;
             
-            cakePriceEl.textContent = '$' + totalPrice.toFixed(2);
+            cakePriceEl.textContent = '$' + basePrice.toFixed(2);
+            
+            if (isPreferred && discount > 0) {
+                discountRowEl.style.display = 'flex';
+                discountAmountEl.textContent = '-$' + discount.toFixed(2);
+            } else {
+                discountRowEl.style.display = 'none';
+            }
+            
             totalAmountEl.textContent = '$' + totalPrice.toFixed(2);
             depositAmountEl.textContent = '$' + deposit.toFixed(2);
         }
@@ -726,6 +755,12 @@
 
         numLayersSelect.addEventListener('change', generateLayers);
         cakeSizeSelect.addEventListener('change', updatePricing);
+
+        // Preferred customer discount
+        const preferredCustomerCheckbox = document.getElementById('preferredCustomer');
+        if (preferredCustomerCheckbox) {
+            preferredCustomerCheckbox.addEventListener('change', updatePricing);
+        }
 
         // Employee ID auto-fill
         const employeeSelect = document.getElementById('employeeSelect');
